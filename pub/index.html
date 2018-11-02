@@ -1,0 +1,400 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Visca API</title>
+    <base href="/" />
+    <link rel="icon" href="PTZ-Optics-Favicon.jpg" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div id="options">
+                <h3 class="text-center mx-auto">Option Panel</h3>
+                <nav id="optionsNav" class="navbar navbar-default">
+                    <ul class="nav text-center mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active highlight" value="ctrl" onclick="optionView('ctrl');">PTZ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" value="focus" onclick="optionView('focus');">Focus</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" value="camImage" onclick="optionView('camImage');">Image</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" value="preset" onclick="optionView('preset');">Presets</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="optionWindow">
+                <div id="ctrl" class="optionView">
+                    <div class="row">
+                        <div id="arrowControl" class="col">
+                            <div class="row">
+                                <div class="col text-center mx-auto">
+                                    <div class="btn-group pb-1" role="group" aria-label="Focus">
+                                        <button id="focusWide" type="button" class="btn btn-sm btn-outline-dark" data-value="wide"><i class="fas fa-minus"></i></button>
+                                        <button type="button" class="btn btn-small btn-dark disabled">Focus</button>
+                                        <button id="focusTele" type="button" class="btn btn-sm btn-outline-dark" data-value="tele"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row justify-content-md-center">
+                                        <div class="col mx-auto text-center">
+                                            <i id="motionUp" data-value="up" class="camera-ctrl movementBtn fas fa-sm fa-arrow-up"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="col text-center">
+                                            <i id="motionLeft" data-value="left" class="camera-ctrl movementBtn fas fa-sm fa-arrow-left"></i>
+                                            <i class="camera-ctrl movementBtn fas fa-sm fa-home" onclick="moveHome()"></i>
+                                            <i id="motionRight" data-value="right" class="camera-ctrl movementBtn fas fa-sm fa-arrow-right"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="col mx-auto text-center">
+                                            <i id="motionDown" data-value="down" class="camera-ctrl movementBtn fas fa-sm fa-arrow-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <div class="btn-group pb-1" role="group" aria-label="Focus">
+                                        <button id="zoomWide" type="button" class="btn btn-sm btn-outline-dark" data-value="wide"><i class="fas fa-minus"></i></button>
+                                        <button type="button" class="btn btn-small btn-dark disabled">Zoom</button>
+                                        <button id="zoomTele" type="button" class="btn btn-sm btn-outline-dark" data-value="tele"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pr-1 pt-1">
+                                <div class="col-lg-10 mx-auto">
+                                    <div class="form-group">
+                                        <label id="panSpeedLabel" for="formControlRange">Pan Speed: 10</label>
+                                        <input id="panSpeedInput" data-html="pan" type="range" class="form-control-range panTiltInput" max="18" min="1" value="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label id="tiltSpeedLabel" for="formControlRange">Tilt Speed: 10</label>
+                                        <input id="tiltSpeedInput" data-html="tilt" type="range" class="form-control-range panTiltInput" max="14" min="1" value="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label id="zoomSpeedLabel" for="formControlRange">Zoom Speed: 5</label>
+                                        <input id="zoomSpeedInput" data-html="zoom" type="range" class="form-control-range panTiltInput" max="7" min="0" value="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label id="focusSpeedLabel" for="formControlRange">Focus Speed: 5</label>
+                                        <input id="focusSpeedInput" data-html="focus" type="range" class="form-control-range panTiltInput" max="7" min="0" value="5">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="focus" class="optionView" style="display:none;">
+                    <div class="row text-center imageRow">
+                        <div class="col-lg-6">
+                            <label for="focusModeSel">Focus Mode:</label>
+                            <select id="focusModeSel" class="custom-select" onchange="focusMode()">
+                                <option value="auto">Auto</option>
+                                <option value="manual">Manual</option>
+                                <option value="toggle">toggle</option>
+                                <option value="lock">Lock</option>
+                                <option value="unlock">Unlock</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="afZoneSel">AF Zone:</label>
+                            <select id="afZoneSel" class="custom-select" onchange="afZone()">
+                                <option value="top">Top</option>
+                                <option value="center">Center</option>
+                                <option value="bottom">Bottom</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="camImage" class="optionView" style="display:none;">
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <label for="wbModeSel">White Balance:</label>
+                            <select id="wbModeSel" class="custom-select" onchange="whiteBalance('wbmode')">
+                                <option value="auto">Auto</option>
+                                <option value="indoor">Indoor</option>
+                                <option value="outdoor">Outdoor</option>
+                                <option value="onepush">Onepush</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="awbSel">AWB Sensitivity:</label>
+                            <select id="awbSel" class="custom-select" onchange="whiteBalance('awbsenstivity')">
+                                <option value="high">High</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <label for="bgainBtn">Bgain:</label>
+                            <div id="bgainBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Bgain Button Group">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="bgain('standard', 'up')">Up</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="bgain('standard', 'down')">Down</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="bgain('standard', 'reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="rgainBtn">Rgain:</label>
+                            <div id="rgainBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Rgain Button Group">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="rgain('standard', 'up')">Up</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="rgain('standard', 'down')">Down</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="rgain('standard', 'reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="gainBtn">Gain:</label>
+                            <div id="gainBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Gain Button Group">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="gain('standard', 'up')">Up</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="gain('standard', 'down')">Down</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="gain('standard', 'reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <label for="blRadios">Backlight:</label>
+                            <div id="blRadios" class="mx-auto text-center">
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" for="blOn">On</label>
+                                    <input class="form-check-input" onclick="backlight('on')" type="radio" name="blRadio" id="blOn" value="on">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" for="blOff"> Off </label>
+                                    <input class="form-check-input" onclick="backlight('off')" type="radio" name="blRadio" id="blOff" checked>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="bwRadios">Black White:</label>
+                            <div id="bwRadios" class="mx-auto text-center">
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" for="bwOn">On</label>
+                                    <input class="form-check-input" onclick="blackWhite('on')" type="radio" name="bwRadio" id="blOn" value="on">
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" for="bwOff">Off</label>
+                                    <input class="form-check-input" onclick="blackWhite('off')" type="radio" name="bwRadio" id="blOff" value="off" checked>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <label for="flickerBtn">Flicker:</label>
+                            <div id="flickerBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Camera Flicker">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="flicker('off')">Off</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="flicker('50Hz')">50Hz</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="flicker('60Hz')">60hz</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="imageFlipCb">Image Flip Dimension:</label>
+                            <div id="imageFlipCb" class="mx-auto text-center">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="lr" onchange="imgFlip('lr')">
+                                    <label class="form-check-label" for="lr">Horizontal</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="pf" onchange="imgFlip('pf')">
+                                    <label class="form-check-label" for="pf">Vertical</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <div class="form-group">
+                                <label id="colorHueInputLabel" for="colorHueInput">ColorHue: 8</label>
+                                <input id="colorHueInput" type="range" class="form-control-range" max="14" min="0" value="8" onchange="colorHue()">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label id="brightInputLabel" for="brightInput">Brightness: 8</label>
+                                <input id="brightInput" type="range" class="form-control-range" max="14" min="0" value="8" onchange="brightness()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <div class="form-group">
+                                <label id="contrastInputLabel" for="contrastInput">Contrast: 9</label>
+                                <input id="contrastInput" type="range" class="form-control-range" max="14" min="0" value="9" onchange="contrast()">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="aeSel">Auto Exp:</label>
+                            <select id="aeSel" class="custom-select" onchange="autoExp()">
+                                <option value="fullauto">Full Auto</option>
+                                <option value="manual" selected>Manual</option>
+                                <option value="shutter">Shutter</option>
+                                <option value="iris">Iris</option>
+                                <option value="bright">Bright</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col">
+                            <label for="shutterBtn">Shutter:</label>
+                            <div id="shutterBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Shutter Button Group">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="shutter('standard', 'up')">Up</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="shutter('standard', 'down')">Down</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="shutter('standard', 'reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="irisBtn">Iris:</label>
+                            <div id="irisBtn" class="mx-auto">
+                                <div class="btn-group" role="group" aria-label="Iris Button Group">
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="iris('standard', 'up')">Up</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="iris('standard', 'down')">Down</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm text-center" onclick="iris('standard', 'reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="preset" class="optionView" style="display:none;">
+                    <div class="row mb-2 text-center imageRow">
+                        <div class="col-lg-12 mx-auto">
+                            <label id="presetSpeedLabel" for="presetSpeedInput">Preset Recall Speed: 5</label>
+                            <input id="presetSpeedInput" type="range" class="form-control-range" max="18" min="1" value="5" onchange="presetAction('speed', 'presetSpeedInput')">
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col-lg-12 mx-auto">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Preset:</span>
+                                </div>
+                                <input id="presetInput" class="form-control" placeholder="Preset Number (0 - 127)" aria-label="Preset number Input" aria-describedby="Camera Preset">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center imageRow">
+                        <div class="col mx-auto text-center">
+                            <button id="setPresetBtn" type="button" class="btn btn-sm btn-outline-dark" onclick="presetAction('set')">Set</button>
+                        </div>
+                        <div class="col mx-auto text-center">
+                            <button id="callPresetBtn" type="button" class="btn btn-sm btn-outline-dark" onclick="presetAction('call')">Call</button>
+                        </div>
+                        <div class="col mx-auto text-center">
+                            <button id="recallPresetBtn" type="button" class="btn btn-sm btn-outline-dark" onclick="presetAction('reset')">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div id="content" class="container-fluid">
+            <div class="modal fade" id="newCameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cameraModalLabel">New Camera</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="needs-validation">
+                                <div class="form-group">
+                                    <label for="cameraNickname">Name:</label>
+                                    <input type="text" name="name" class="form-control" id="cameraNickname" placeholder="Camera Nickname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cameraIpAddy">IP Address:</label>
+                                    <input type="text" name="ip" class="form-control" id="cameraIpAddy" placeholder="xxx.xxx.xxx.x" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cameraPort">Port:</label>
+                                    <input type="text" name="port" class="form-control" id="cameraPort" placeholder="5678" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cameraRtsp">RTSP:</label>
+                                    <input type="text" name="rtsp" class="form-control" id="cameraRtsp" placeholder="xxx.xxx.xxx.x:554/1" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-outline-dark" onclick="addCamera();" data-dismiss="modal">Save Camera</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row topBtns">
+                <div class="col-lg-8 text-center mx-auto">
+                    <button type="button" class="btn btn-sm btn-outline-info" onclick="toggleSideBar()">
+                        <i class="fas fa-align-left"></i>
+                        <span>Toggle Sidebar</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-dark" data-toggle="modal" data-target="#newCameraModal"><span>Add Camera</span></button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteCamera();"><span>Delete Camera</span></button>
+                    <button id="fullscreenToggle" type="button" class="btn btn-sm btn-outline-dark" onclick="reqFullScreen()"><i class="fas fa-arrows-alt"></i><span></span></button>
+                    <select id="cameraList" class="custom-select" onchange="changeStream();"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="stageContainer" class="text-center">
+                        <div id="msgStage" class="alert text-center mt-1"></div>
+                        <canvas id="streamStage" class="img-fluid mx-auto text-center" controls></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="/js/motion.js"></script>
+    <script type="text/javascript" src="/js/image.js"></script>
+    <script type="text/javascript" src="/js/focusZoom.js"></script>
+    <script type="text/javascript" src="/js/jsmpeg.min.js"></script>
+    <script type="text/javascript" src="/js/stream.js"></script>
+    <script type="text/javascript" src="/js/preset.js"></script>
+    <script type="text/javascript">
+        getAllSavedCameras()
+            .then((cameras) => {
+                const camObj = JSON.parse(cameras);
+                camObj.forEach(function(camera, index) {
+                    addCameraTag(camera, index);
+                });
+            }).then(() => {
+                startStream();
+                motionTouchEvents();
+                focusTouchEvents('focus');
+            })
+            .catch((err => console.log(err)));
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>

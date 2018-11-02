@@ -1,0 +1,27 @@
+{
+  "name": "ptzoptics_server_api",
+  "version": "0.0.1",
+  "description": "Skeleton webapp to control PTZOptics cameras via the visca protocol",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "devStart": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PTZOptics",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.15",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "connect-mongo": "^2.0.1",
+    "cors": "^2.8.4",
+    "cross-spawn": "^6.0.5",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.1",
+    "nodemon": "^1.17.5",
+    "path": "^0.12.7",
+    "tcp-port-used": "^1.0.0",
+    "ws": "1.1.1"
+  }
+}

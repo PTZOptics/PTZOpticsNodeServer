@@ -21,6 +21,7 @@ You need to have at least [Node.js version: 8.12.0](https://nodejs.org/en/downlo
 4. Start the server
 
     `cd /The/path/to/the/repo`  
+    `npm install`  
     `npm start`
 
 5. Head to `http://localhost:4000`
